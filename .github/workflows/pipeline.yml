@@ -62,8 +62,7 @@ jobs:
           image:   ${{ vars.GOOGLE_ARTIFACT }}/${{ vars.GOOGLE_PROJECT_ID }}/${{ vars.GOOGLE_REPONAME }}/${{ vars.GOOGLE_MYAPP }}:latest
           flags: '--allow-unauthenticated'
 
-      - name: Validando a API
-        run: 'curl "${{ steps.deploy.outputs.url }}"'
+      - name: Validando a API        run: 'curl "${{ steps.deploy.outputs.url }}"'
 
       - name: Notificação Slack
         id: slack
@@ -85,3 +84,5 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+=======
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
