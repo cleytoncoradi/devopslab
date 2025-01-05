@@ -39,8 +39,12 @@ jobs:
           registry: '${{ vars.GOOGLE_ARTIFACT }}'
           username: _json_key
           password: '${{ secrets.GOOGLE_CREDENTIALS }}'
-
-      - name: Build Image
+      
+      - name: New Relic License
+        run: |
+          sed -i "s/licensekey/${{ secrets.NEW_RELIC_LICENSE_KEY }}/g" Dockerfile
+          
+      - name: Build Image  
         run: |
           docker build -t ${{ vars.GOOGLE_ARTIFACT }}/${{ vars.GOOGLE_PROJECT_ID }}/${{ vars.GOOGLE_REPONAME }}/${{ vars.GOOGLE_MYAPP }}:latest .
 
@@ -93,3 +97,20 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFICATIONS_TOKEN }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  DAST:
+    needs: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Download do Repositório
+        uses: actions/checkout@v4       # https://github.com/actions/checkout
+    
+      - name: DAST (ZAP Scan)
+        uses: zaproxy/action-full-scan@v0.12.0   #https://github.com/marketplace/actions/zap-full-scan
+        with:
+          target: 'https://cleytoncoradi-fgxq5tbfwq-ue.a.run.app'
